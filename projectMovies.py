@@ -162,30 +162,123 @@ Whether you're a movie enthusiast, a data analyst, or simply curious about the w
         
         # Scatter plot of Budget vs Revenue
         st.header("Budget vs Revenue")
-        fig = px.scatter(df_top_20_movies_sorted, x='budget', y='revenue', text='original_title', color='director')
-        fig.update_traces(mode='markers', marker=dict(size=10))
-        fig.update_layout(title='Budget vs Revenue', xaxis_title='Budget ($)', yaxis_title='Revenue ($)')
+        # Group the data by original title and calculate the sum of budget and revenue
+        grouped_data = df_top_20_movies_sorted.groupby('original_title').agg({'budget': 'sum', 'revenue': 'sum'}).reset_index()
+
+        # Create the bar chart
+        fig = go.Figure()
+
+        # Define color palette
+        budget_color = 'indigo'  # Rich purple color for budget
+        revenue_color = 'coral'  # Coral color for revenue
+
+        # Add a bar trace for budget
+        fig.add_trace(go.Bar(
+            x=grouped_data['original_title'],
+            y=grouped_data['budget'],
+            name='Budget',
+            marker_color=budget_color  # Apply the color for budget
+        ))
+
+        # Add a bar trace for revenue
+        fig.add_trace(go.Bar(
+            x=grouped_data['original_title'],
+            y=grouped_data['revenue'],
+            name='Revenue',
+            marker_color=revenue_color  # Apply the color for revenue
+        ))
+
+        # Update the layout
+        fig.update_layout(
+            title='Total Budget and Revenue by Movie',
+            xaxis_title='Movie Title',
+            yaxis_title='Amount',
+            barmode='stack',  # Change barmode to stack for stacked bars
+            template='plotly_white',  # Apply a clean, white theme
+            xaxis_tickangle=-45,  # Rotate x-axis labels for better readability
+            legend_title_text='Legend',  # Add a title to the legend
+            font=dict(family="Arial, sans-serif", size=12, color='black'),  # Customize font
+            hovermode='x unified'  # Add hover mode for unified display
+        )
+
+        # Show the plot
         st.plotly_chart(fig)
         
         # Pie chart of Revenue Distribution
         st.header("Revenue Distribution")
-        fig = px.pie(df_top_20_movies_sorted, values='revenue', names='original_title', hole=0.3)
-        fig.update_traces(textinfo='label+percent')
-        fig.update_layout(title='Revenue Distribution among Top 20 Movies')
+                # Create a horizontal bar chart
+        fig = go.Figure()
+
+        # Add a bar trace for revenue
+        fig.add_trace(go.Bar(
+            y=df_top_20_movies_sorted['original_title'],  # Movie titles on y-axis
+            x=df_top_20_movies_sorted['revenue'],  # Revenue on x-axis
+            orientation='h',  # Make the bar chart horizontal
+            marker=dict(color='lightcoral')  # Use an attractive color
+        ))
+
+        # Update layout
+        fig.update_layout(
+            title='Revenue Distribution by Movie (Horizontal Bar Chart)',
+            xaxis_title='Revenue',
+            yaxis_title='Movie Title',
+            template='plotly_white',  # Apply a clean, white theme
+            yaxis=dict(autorange='reversed'),  # Reverse the y-axis to order movies from top revenue to lowest
+            font=dict(family="Arial, sans-serif", size=12, color='black')  # Customize font
+        )
+
+        # Show the plot
         st.plotly_chart(fig)
         
         # Line plot of Release Year Trends
         st.header("Release Year Trends")
         release_year_counts = df_top_20_movies_sorted['release_year'].value_counts().sort_index()
         fig = px.line(x=release_year_counts.index, y=release_year_counts.values)
-        fig.update_layout(title='Number of Movies Released by Year', xaxis_title='Release Year', yaxis_title='Number of Movies')
+
+        # Add markers and customize color
+        fig.update_traces(mode='lines+markers', marker=dict(symbol='circle', size=18, color='blue'), line=dict(color='white'))
+
+        # Update the layout of the plot
+        fig.update_layout(
+            title='Number of Movies Released by Year',
+            xaxis_title='Release Year',
+            yaxis_title='Number of Movies',
+            template='plotly_white'  # Optional: Add a white theme for better visual appearance
+        )
+
+        # Display the plot using Streamlit
         st.plotly_chart(fig)
         
         # Histogram of Runtime Distribution
+       # Set the style of the plots to enhance appearance
+        sns.set_style("whitegrid")
+
+       # Header for runtime distribution
         st.header("Runtime Distribution")
-        fig = px.histogram(df_top_20_movies_sorted, x='runtime', nbins=20, histnorm='percent')
-        fig.update_layout(title='Runtime Distribution of Top 20 Movies', xaxis_title='Runtime (minutes)', yaxis_title='Percentage of Movies')
-        st.plotly_chart(fig)
+
+        # Create the runtime density plot
+        plt.figure(figsize=(8, 6))
+
+        # Use kdeplot for a density plot
+        sns.kdeplot(df_top_20_movies_sorted['runtime'], color='mediumorchid', fill=True, linewidth=2)
+
+        # Add markers for key points on the line
+        sns.kdeplot(df_top_20_movies_sorted['runtime'], color='navy', linestyle='--', label='Runtime Density')
+
+        # Set the plot title and labels
+        plt.title('Runtime Density', fontsize=14, fontweight='bold')
+        plt.xlabel('Runtime (minutes)', fontsize=12)
+        plt.ylabel('Density', fontsize=12)
+
+        # Add a grid for better readability
+        plt.grid(True, alpha=0.5)
+
+        # Add a legend for clarity
+        plt.legend()
+
+        # Show the plot using st.pyplot()
+        st.pyplot(plt)
+
 
         #Budget vs Director
         # Budget vs Director
