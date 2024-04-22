@@ -109,7 +109,7 @@ button[data-baseweb="button"]:active {
 
 # Apply the CSS to the app
 def main():
-    st.sidebar.image('image_path.jpg', caption='Top Movies', use_column_width=True, class_name='sidebar-image')
+    st.sidebar.image('data_analysis_image.jpg', caption='Top Movies', use_column_width=True, class_name='sidebar-image')
     # Set the title for the sidebar
     st.sidebar.title("Navigation")
 
