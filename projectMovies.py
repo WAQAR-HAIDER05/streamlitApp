@@ -36,6 +36,14 @@ css = """
     border-right: 2px solid #00796b;
     font-family: 'Roboto', sans-serif;
 }
+.sidebar-image {
+    padding: 10px;
+    background-color: #e0f7fa; /* Light teal */
+    border-radius: 10px;
+    border: 2px solid #00796b; /* Darker teal */
+    text-align: center; /* Center the image */
+    margin-bottom: 20px; /* Add margin below the image */
+}
 
 /* Title styling */
 h1 {
@@ -101,6 +109,7 @@ button[data-baseweb="button"]:active {
 
 # Apply the CSS to the app
 def main():
+    st.sidebar.image('image_path.jpg', caption='Top Movies', use_column_width=True, class_name='sidebar-image')
     # Set the title for the sidebar
     st.sidebar.title("Navigation")
 
